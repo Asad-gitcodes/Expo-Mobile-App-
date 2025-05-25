@@ -6,9 +6,12 @@ dotenv.config(); // Loads the environment variables from the .env file.
 
 const app = express();
 // const = keyword in JavaScript used to declare a constant variable. This means that the value of app cannot be reassigned once set.
+
+app.use(express.json()); // middleware 
+
 const PORT = process.env.PORT || 5001;
 // process.env is a special object in Node.js that holds all environment variables. The PORT environment variable can be set in a .env file
-
+//=================================================== Database =================================
 // create a function - async function 
 async function initDB() {
   // Creates an asynchronous function 'initDB' to initialize the database.
@@ -37,6 +40,32 @@ async function initDB() {
     // This ensures the application doesn't start running if the database setup fails.
   }
 }
+
+
+//===================================== Middleware ========================= check auth check  
+
+app.post("/api/transactions", async (req,res) => {
+  // title , amount, category, user_id
+   try {
+    const{title , amount, category, user_id} = req.body
+
+    if(!title || !user_id || !category || amount === undefined) {
+      return res.status(400).json({message: "All fields are required"});
+    }
+    await sql`INSERT INTO transactions(user_id,title,amount,category)
+    VALUES (${user_id},${title},${amount},${category})
+    RETURNING *`;
+
+    console.log(transaction);
+    res.status(201).json(transaction[0]);
+
+   } catch (error) {
+    console.log("Error creating thr transaction",error)
+    res.status(500).json({message:"internal server error"})
+   }
+});
+
+// ============================= ensure the server starts only after the database initialization is successful. =============
 
 initDB().then(() => {
   // Calls the 'initDB' function and waits for it to complete.
