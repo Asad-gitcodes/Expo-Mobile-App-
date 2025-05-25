@@ -1,6 +1,6 @@
 import express from "express"; // to create a web server.
 import dotenv from "dotenv";
-import { sql } from "./condig/db.js"; // Imports the 'sql' object (database query client) from the './config/db.js' file.
+import { sql } from "./config/db.js"; // Imports the 'sql' object (database query client) from the './config/db.js' file.
 
 dotenv.config(); // Loads the environment variables from the .env file.
 
