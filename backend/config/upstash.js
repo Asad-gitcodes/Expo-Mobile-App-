@@ -8,7 +8,7 @@ const redis = Redis.fromEnv();  // Make sure Redis environment variables are pro
 // Initialize the rate limiter
 const ratelimit = new Ratelimit({
   redis: redis,  // Use 'redis' instead of 'refis' for Redis client
-  limiter: Ratelimit.slidingWindow(2, '60s')  // Correct usage of sliding window with 2 requests per 60 seconds
+  limiter: Ratelimit.slidingWindow(100, '60s')  // Correct usage of sliding window with 2 requests per 60 seconds
 });
 
 export default ratelimit;
