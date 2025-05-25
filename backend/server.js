@@ -1,13 +1,16 @@
 import express from "express"; // to create a web server.
 import dotenv from "dotenv";
 import { sql } from "./config/db.js"; // Imports the 'sql' object (database query client) from the './config/db.js' file.
+import rateLimiter from "./middleware/rateLimiter.js";
 
 dotenv.config(); // Loads the environment variables from the .env file.
 
 const app = express();
 // const = keyword in JavaScript used to declare a constant variable. This means that the value of app cannot be reassigned once set.
 
+app.use(rateLimiter);
 app.use(express.json()); // middleware 
+
 
 const PORT = process.env.PORT || 5001;
 // process.env is a special object in Node.js that holds all environment variables. The PORT environment variable can be set in a .env file
