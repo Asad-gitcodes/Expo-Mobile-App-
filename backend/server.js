@@ -91,6 +91,53 @@ app.post("/api/transactions", async (req, res) => {
   }
 });
 
+// ============================== Delect Info check ===================
+
+app.delete("/api/transactions/:id",async(req,res) => {
+  try { 
+    const {id} = req.params;
+
+    if (isNaN(parseInt(id))){
+      return res.status(400).json({message: "Invalid transaction ID"});
+    }
+
+    const result = await sql`DELETE FROM transactions WHERE id =${id} RETURNING *`
+
+    if(result.length === 0){
+      return res.status(404).json({message:"transaction not found"})
+    }
+
+    res.status(200).json({message:"transaction deleted successfully"})
+    
+  } catch (error) {
+    console.log("Error deleting the transaction", error); 
+    // Logs any errors that occur during the transaction creation process.
+    res.status(500).json({ message: "Internal server error" }); 
+    // Responds with a 500 Internal Server Error status if something goes wrong while processing the request.
+  }
+})
+
+// ============================= Get Transaction Summary: ==============================
+
+app.get("/api/transactions/summary/:userId", async (req, res) => {
+  try {
+    const {userId} = req.params;
+
+    const balanceResult = await sql`SELECT COALESCE(SUM(amount), 0) as balance FROM transactions WHERE user_id = ${userId}`;
+    const incomeResult = await sql`SELECT COALESCE(SUM(amount), 0) as income FROM transactions WHERE user_id = ${userId} AND amount > 0`;
+    const expensesResult = await sql`SELECT COALESCE(SUM(amount), 0) as expense FROM transactions WHERE user_id = ${userId} AND amount < 0`;
+
+    res.status(200).json({
+      balance: balanceResult[0].balance,
+      income: incomeResult[0].income,
+      expenses: expensesResult[0].expense
+    });
+  } catch (error) {
+    console.log("Error getting the summary", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 // ============================= ensure the server starts only after the database initialization is successful. =============
 
 initDB().then(() => {
