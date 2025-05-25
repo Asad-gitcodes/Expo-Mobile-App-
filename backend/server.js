@@ -11,7 +11,10 @@ app.use(express.json()); // middleware
 
 const PORT = process.env.PORT || 5001;
 // process.env is a special object in Node.js that holds all environment variables. The PORT environment variable can be set in a .env file
+
+
 //=================================================== Database =================================
+
 // create a function - async function 
 async function initDB() {
   // Creates an asynchronous function 'initDB' to initialize the database.
@@ -40,6 +43,19 @@ async function initDB() {
     // This ensures the application doesn't start running if the database setup fails.
   }
 }
+
+
+// =======================  GET  info check =================================  GET Route for Transactions
+app.get("/api/transactions/:userID", async (req, res) => {
+  try {
+    const { userID } = req.params; // Extracts 'userID' from the URL parameters.
+    const transactions = await sql`SELECT * FROM transactions WHERE user_id = ${userID} ORDER BY created_at DESC`;
+    res.status(200).json(transactions);
+  } catch (error) {
+    console.log("Error getting the transactions", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
 
 
 //===================================== Middleware ========================= check auth check  
@@ -74,6 +90,7 @@ app.post("/api/transactions", async (req, res) => {
     // Responds with a 500 Internal Server Error status if something goes wrong while processing the request.
   }
 });
+
 // ============================= ensure the server starts only after the database initialization is successful. =============
 
 initDB().then(() => {
