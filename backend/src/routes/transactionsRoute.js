@@ -1,6 +1,6 @@
 import express from "express";
 
-import {createTransaction, deleteTransaction, getSummaryByUserID, getTransactionsByUserId} from "../src/controllers/transactionsController.js"
+import {createTransaction, deleteTransaction, getSummaryByUserID, getTransactionsByUserId} from "../controllers/transactionsController.js"
 const router  = express.Router();  // Ensure to use 'route' instead of 'router' to match your variable definition
 
 // =======================  GET Route for Transactions =======================
